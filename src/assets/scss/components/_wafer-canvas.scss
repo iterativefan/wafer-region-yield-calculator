@@ -67,7 +67,8 @@
 
 		.wafer-canvas__shot-map,
 		.wafer-canvas__edge,
-		.wafer-canvas__die-map {
+		.wafer-canvas__die-map,
+		.wafer-canvas__region-map {
 			position: absolute;
 			width: 100%;
 			height: 100%;
@@ -76,12 +77,17 @@
 			transition: transform ease-out 0.3s, opacity ease-out 0.3s;
 		}
 
+		.wafer-canvas__region-map {
+			pointer-events: none;
+		}
+
 		&:hover {
 			box-shadow: 0.125em 0.25em 4em rgba(0, 0, 0, 0.75);
 
 			.wafer-canvas__shot-map,
 			.wafer-canvas__die-map,
-			.wafer-canvas__edge {
+			.wafer-canvas__edge,
+			.wafer-canvas__region-map {
 				opacity: 0;
 			}
 		}

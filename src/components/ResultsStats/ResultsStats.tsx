@@ -16,6 +16,7 @@ import { ReactComponent as ShutterIcon } from "../../assets/icons/shutter.svg";
 import { ReactComponent as SquarePercentageIcon } from "../../assets/icons/square-percentage.svg";
 import { ReactComponent as WidthIcon } from "../../assets/icons/width.svg";
 import { ReactComponent as CircleDotIcon } from "../../assets/icons/circle-dot.svg";
+import { WaferRegionStats } from "./WaferRegionStats";
 
 function waferAreaCm(shape: SubstrateShape, widthMM: number, heightMM: number) {
 	if (shape === "Panel") {
@@ -74,99 +75,108 @@ export function WaferStats(props: {
 		);
 
 	return (
-		<div className="result-stats" aria-busy={!props.results}>
-			<ul className="result-stats__list">
-				<li className="result-stats__result result-stats__result--total-dies">
-					<SquareIcon />
-					Full Dies: {displayValue((props.results?.goodDies ?? 0) + (props.results?.defectiveDies ?? 0))}
-				</li>
-				<li className="result-stats__result result-stats__result--good-dies">
-					<SquareCheckIcon />
-					Good Dies: {displayValue(props.results?.goodDies)}
-				</li>
-				<li className="result-stats__result result-stats__result--defective-dies">
-					<SquareXIcon />
-					Defective Dies: {displayValue(props.results?.defectiveDies)}
-				</li>
-				<li className="result-stats__result result-stats__result--partial-dies">
-					<SquareSlashIcon />
-					Partial Dies: {displayValue(props.results?.partialDies)}
-				</li>
-				<li className="result-stats__result result-stats__result--lost-dies">
-					<SquareOffIcon />
-					Excluded Dies: {displayValue(props.results?.lostDies)}
-				</li>
-				<li className="result-stats__result result-stats__result--yield">
-					<CirclePecentageIcon />
-					Fab Yield:{" "}
-					{displayValue(
-						props.results?.fabYield && props.results.fabYield * 100,
-						"%",
-					)}
-				</li>
-			</ul>
-			<ul className="result-stats__list">
-				<li className="result-stats__result result-stats__result--die-cost">
-					<DollarIcon />
-					Cost Per Die: {`$${displayValue(props.results?.dieCost)}`}
-				</li>
-				{props.reticleLimit && (
-					<li className="result-stats__result result-stats__result--shot-count">
-						<ShutterIcon />
-						Exposures:{" "}
+		<>
+			<div className="result-stats" aria-busy={!props.results}>
+				<ul className="result-stats__list">
+					<li className="result-stats__result result-stats__result--total-dies">
+						<SquareIcon />
+						Full Dies: {displayValue((props.results?.goodDies ?? 0) + (props.results?.defectiveDies ?? 0))}
+					</li>
+					<li className="result-stats__result result-stats__result--good-dies">
+						<SquareCheckIcon />
+						Good Dies: {displayValue(props.results?.goodDies)}
+					</li>
+					<li className="result-stats__result result-stats__result--defective-dies">
+						<SquareXIcon />
+						Defective Dies: {displayValue(props.results?.defectiveDies)}
+					</li>
+					<li className="result-stats__result result-stats__result--partial-dies">
+						<SquareSlashIcon />
+						Partial Dies: {displayValue(props.results?.partialDies)}
+					</li>
+					<li className="result-stats__result result-stats__result--lost-dies">
+						<SquareOffIcon />
+						Excluded Dies: {displayValue(props.results?.lostDies)}
+					</li>
+					<li className="result-stats__result result-stats__result--yield">
+						<CirclePecentageIcon />
+						Fab Yield:{" "}
 						{displayValue(
-							(props.results?.fullShotCount || 0) +
-								(props.results?.partialShotCount || 0),
-						)}{" "}
-						({displayValue(props.results?.fullShotCount)} full,{" "}
-						{displayValue(props.results?.partialShotCount)} partial)
+							props.results?.fabYield && props.results.fabYield * 100,
+							"%",
+						)}
 					</li>
-				)}
-				{props.shape === "Panel" ? (
-					<>
-						<li className="result-stats__result result-stats__result--panel-width">
-							<WidthIcon />
-							Panel Width: {props.waferWidth}mm
-						</li>
-						<li className="result-stats__result result-stats__result--panel-height">
-							<HeightIcon />
-							Panel Height: {props.waferHeight}mm
-						</li>
-					</>
-				) : (
-					<li className="result-stats__result result-stats__result--panel-diameter">
-						<WidthIcon />
-						Wafer Diameter: {props.waferWidth}mm
+				</ul>
+				<ul className="result-stats__list">
+					<li className="result-stats__result result-stats__result--die-cost">
+						<DollarIcon />
+						Cost Per Die: {`$${displayValue(props.results?.dieCost)}`}
 					</li>
-				)}
-				<li className="result-stats__result result-stats__result--wafer-area">
-					<DimensionsIcon />
-					{props.shape} Area: {displayValue(waferArea, "cm²")}
-				</li>
-				<li className="result-stats__result result-stats__result--single-die-area">
-					<CircleDotIcon />
-					Per Die Area: {displayValue(props.dieWidth * props.dieHeight, "mm²")}
-				</li>
-				<li className="result-stats__result result-stats__result--total-die-area">
-					<Grid4x4Icon />
-					Total Die Area:{" "}
-					{displayValue(
-						props.results?.totalDies &&
-							totalDieAreaCm(
-								props.dieWidth,
-								props.dieHeight,
-								props.results.totalDies - props.results.lostDies,
-							),
-						"cm²",
+					{props.reticleLimit && (
+						<li className="result-stats__result result-stats__result--shot-count">
+							<ShutterIcon />
+							Exposures:{" "}
+							{displayValue(
+								(props.results?.fullShotCount || 0) +
+									(props.results?.partialShotCount || 0),
+							)}{" "}
+							({displayValue(props.results?.fullShotCount)} full,{" "}
+							{displayValue(props.results?.partialShotCount)} partial)
+						</li>
 					)}
-				</li>
-				<li className="result-stats__result result-stats__result--waste-area">
-					<ScissorsIcon />
-					Total Waste Area: {displayValue(wasteArea, "cm²")} (
-					{wasteArea && displayValue((wasteArea / waferArea) * 100, "%")})
-				</li>
-			</ul>
-		</div>
+					{props.shape === "Panel" ? (
+						<>
+							<li className="result-stats__result result-stats__result--panel-width">
+								<WidthIcon />
+								Panel Width: {props.waferWidth}mm
+							</li>
+							<li className="result-stats__result result-stats__result--panel-height">
+								<HeightIcon />
+								Panel Height: {props.waferHeight}mm
+							</li>
+						</>
+					) : (
+						<li className="result-stats__result result-stats__result--panel-diameter">
+							<WidthIcon />
+							Wafer Diameter: {props.waferWidth}mm
+						</li>
+					)}
+					<li className="result-stats__result result-stats__result--wafer-area">
+						<DimensionsIcon />
+						{props.shape} Area: {displayValue(waferArea, "cm²")}
+					</li>
+					<li className="result-stats__result result-stats__result--single-die-area">
+						<CircleDotIcon />
+						Per Die Area: {displayValue(props.dieWidth * props.dieHeight, "mm²")}
+					</li>
+					<li className="result-stats__result result-stats__result--total-die-area">
+						<Grid4x4Icon />
+						Total Die Area:{" "}
+						{displayValue(
+							props.results?.totalDies &&
+								totalDieAreaCm(
+									props.dieWidth,
+									props.dieHeight,
+									props.results.totalDies - props.results.lostDies,
+								),
+							"cm²",
+						)}
+					</li>
+					<li className="result-stats__result result-stats__result--waste-area">
+						<ScissorsIcon />
+						Total Waste Area: {displayValue(wasteArea, "cm²")} (
+						{wasteArea && displayValue((wasteArea / waferArea) * 100, "%")})
+					</li>
+				</ul>
+			</div>
+			{props.shape === "Wafer" && props.results && (
+				<WaferRegionStats
+					dies={props.results.dies}
+					waferWidth={props.waferWidth}
+					waferHeight={props.waferHeight}
+				/>
+			)}
+		</>
 	);
 }
 
