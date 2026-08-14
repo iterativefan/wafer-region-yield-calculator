@@ -82,6 +82,72 @@ function ShotMap(props: {
 	);
 }
 
+function RegionMap(props: {
+	waferWidth: number;
+	waferHeight: number;
+}) {
+	const canvasEl = useRef<HTMLCanvasElement>(null);
+
+	useEffect(() => {
+		if (!canvasEl.current || props.waferWidth <= 0 || props.waferHeight <= 0) {
+			return;
+		}
+
+		const context = canvasEl.current.getContext("2d");
+		if (!context) {
+			return;
+		}
+
+		const widthPx = props.waferWidth * mmToPxScale;
+		const heightPx = props.waferHeight * mmToPxScale;
+		const centerX = widthPx / 2;
+		const centerY = heightPx / 2;
+		const radiusPx = Math.min(widthPx, heightPx) / 2;
+
+		context.clearRect(0, 0, widthPx, heightPx);
+		context.save();
+		context.strokeStyle = "rgba(0,0,0,0.72)";
+		context.lineWidth = 1.5;
+		context.setLineDash([7, 5]);
+
+		// Four internal square boundaries create the five A-E square-radius regions.
+		[0.2, 0.4, 0.6, 0.8].forEach((fraction) => {
+			const halfSide = radiusPx * fraction;
+			context.strokeRect(
+				centerX - halfSide,
+				centerY - halfSide,
+				halfSide * 2,
+				halfSide * 2,
+			);
+		});
+		context.setLineDash([]);
+
+		// Label each band along the horizontal radius. These labels use the same
+		// coordinate system as the die grid and therefore move with the wafer map.
+		context.font = "bold 18px sans-serif";
+		context.textAlign = "center";
+		context.textBaseline = "middle";
+		context.lineWidth = 3;
+		["A", "B", "C", "D", "E"].forEach((region, index) => {
+			const x = centerX + radiusPx * (0.1 + index * 0.2);
+			context.strokeStyle = "rgba(255,255,255,0.9)";
+			context.strokeText(region, x, centerY);
+			context.fillStyle = "rgba(0,0,0,0.9)";
+			context.fillText(region, x, centerY);
+		});
+		context.restore();
+	}, [props.waferWidth, props.waferHeight]);
+
+	return (
+		<canvas
+			className="wafer-canvas__region-map"
+			ref={canvasEl}
+			width={props.waferWidth * mmToPxScale}
+			height={props.waferHeight * mmToPxScale}
+		></canvas>
+	);
+}
+
 function LossyEdgeMarker(props: {
 	lossyEdgeWidth: number;
 	waferWidth: number;
@@ -259,6 +325,12 @@ export function WaferCanvas(props: {
 					shape={props.shape}
 					notchKeepOutHeight={props.notchKeepOutHeight}
 				/>
+				{props.shape === "Wafer" && (
+					<RegionMap
+						waferWidth={props.waferWidth}
+						waferHeight={props.waferHeight}
+					/>
+				)}
 				<div className="wafer-canvas__watermark"></div>
 			</Tilt>
 		</div>
