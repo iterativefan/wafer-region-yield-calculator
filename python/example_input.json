@@ -1,0 +1,23 @@
+{
+  "die_size_um": {
+    "width": 24639,
+    "height": 15989
+  },
+  "scribe_line_um": {
+    "x": 360,
+    "y": 360
+  },
+  "wafer": {
+    "diameter_mm": 300,
+    "edge_loss_mm": 3,
+    "notch_keep_out_mm": 5
+  },
+  "reticle": {
+    "enabled": true,
+    "width_mm": 26,
+    "height_mm": 33,
+    "offset_x_mm": 0,
+    "offset_y_mm": 0,
+    "auto_optimize_offset": true
+  }
+}
